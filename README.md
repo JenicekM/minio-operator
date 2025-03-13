@@ -1,34 +1,34 @@
-### MINIO Operator
+# MINIO Operator
 https://min.io/docs/minio/kubernetes/upstream/operations/installation.html
 
 ```
 kubectl apply -k "github.com/minio/operator?ref=v7.0.0"
-
 kubectl apply -k "github.com/minio/operator?ref=v7.0.0" --dry-run=client -o yaml >> minio-operator.yaml
 ```
-if 
+### error: 
 ```
 4m          Warning   FailedCreate        replicaset/minio-operator-fcbcfb669   Error creating: pods "minio-operator-fcbcfb669-" is forbidden: unable to validate against any security context constraint: [provider "anyuid": Forbidden: not usable by user or serviceaccount, provider restricted-v2: .containers[0].runAsUser: Invalid value: 1000: must be in the ranges: [1000740000, 1000749999], provider "restricted": Forbidden: not usable by user or serviceaccount, provider "nonroot-v2": Forbidden: not usable by user or serviceaccount, provider "nonroot": Forbidden: not usable by user or serviceaccount, provider "noobaa-db": Forbidden: not usable by user or serviceaccount, provider "noobaa": Forbidden: not usable by user or serviceaccount, provider "noobaa-endpoint": Forbidden: not usable by user or serviceaccount, provider "hostmount-anyuid": Forbidden: not usable by user or serviceaccount, provider "machine-api-termination-handler": Forbidden: not usable by user or serviceaccount, provider "hostnetwork-v2": Forbidden: not usable by user or serviceaccount, provider "hostnetwork": Forbidden: not usable by user or serviceaccount, provider "hostaccess": Forbidden: not usable by user or serviceaccount, provider "rook-ceph": Forbidden: not usable by user or serviceaccount, provider "node-exporter": Forbidden: not usable by user or serviceaccount, provider "rook-ceph-csi": Forbidden: not usable by user or serviceaccount, provider "privileged": Forbidden: not usable by user or serviceaccount]
 ```
-use 
+### use 
 ```
 oc adm policy add-scc-to-user privileged  system:serviceaccount:minio-operator:minio-operator
 ```
 
 https://pet2cattle.com/2022/09/openshift-assign-securitycontextconstraints-serviceaccount
-or 
+
+## Deploy with prepared yamls:
 ```
 oc apply -f minio-operator.yaml
 oc apply -f scc-minio-operator.yaml
 ```
-
+### Check if operator pods are running:
 ```
 oc get pods -n minio-operator
 NAME                             READY   STATUS    RESTARTS   AGE
 minio-operator-fcbcfb669-2gjm8   1/1     Running   0          143m
 minio-operator-fcbcfb669-mcmgx   1/1     Running   0          143m
 ```
-Deploy a MinIO Tenant using Kustomize
+### Deploy a MinIO Tenant using Kustomize
 
 https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/deploy-minio-tenant.html#minio-k8s-deploy-minio-tenant
 
@@ -46,12 +46,11 @@ volumeClaimTemplate.spec.resources.requests.storage: 1Ti
 ```
 oc adm policy add-scc-to-user privileged  system:serviceaccount:minio-tenant:myminio-sa
 ```
-route: 
+### route: 
 ```
 oc create route passthrough --service myminio-console
 ```
-
-or 
+#### or 
 ```
 apiVersion: route.openshift.io/v1
 kind: Route
@@ -72,16 +71,32 @@ spec:
 status:  {}
 ```
 
-or 
+## Deploy with yamls:
 ```
 oc apply -f tenant-base.yaml
 oc apply -f scc-myminio-sa.yaml
-oc apply -f route.yaml
+oc apply -f route.yaml # modify with correct domain
 ```
 
-Create bucket:
+## Create bucket:
 ```
 oc exec -it myminio-pool-0-0 -- mc alias set myminio https://localhost:9000 minio minio123 --insecure
 oc exec -it myminio-pool-0-0 -- mc mb myminio/mybucket --insecure
 ```
+### pasword access_key in tenant-base.yaml or:
+```
+cat tenant-base.yaml
+  config.env: |-
+    export MINIO_ROOT_USER="minio"
+    export MINIO_ROOT_PASSWORD="minio123"
 
+oc get secret -n minio-tenant storage-user -o yaml
+data:
+  CONSOLE_ACCESS_KEY: Y29uc29sZQ==
+  CONSOLE_SECRET_KEY: Y29uc29sZTEyMw==
+
+oc get routes
+NAME              HOST/PORT                                                                    PATH   SERVICES          PORT            TERMINATION   WILDCARD
+myminio-console   myminio-console-minio-tenant.apps.cluster-k2j4h.dynamic.redhatworkshops.io          myminio-console   https-console   passthrough   None
+
+```
