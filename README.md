@@ -34,6 +34,8 @@ https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/d
 
 ```
 kubectl kustomize https://github.com/minio/operator/examples/kustomization/base/ > tenant-base.yaml
+kubectl kustomize https://github.com/minio/operator/examples/kustomization/tenant-openshift/ > tenant-openshift.yaml # need to check with this option
+
 
 vi  tenant-base.yaml
 
