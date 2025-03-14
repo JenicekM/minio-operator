@@ -33,8 +33,8 @@ minio-operator-fcbcfb669-mcmgx   1/1     Running   0          143m
 https://min.io/docs/minio/kubernetes/upstream/operations/install-deploy-manage/deploy-minio-tenant.html#minio-k8s-deploy-minio-tenant
 
 ```
-kubectl kustomize https://github.com/minio/operator/examples/kustomization/base/ > tenant-base.yaml
-kubectl kustomize https://github.com/minio/operator/examples/kustomization/tenant-openshift/ > tenant-openshift.yaml # need to check with this option
+kubectl kustomize https://github.com/minio/operator/examples/kustomization/base/ > tenant-base.yaml                  # Kubernetes
+kubectl kustomize https://github.com/minio/operator/examples/kustomization/tenant-openshift/ > tenant-openshift.yaml # Openshift
 
 
 vi  tenant-base.yaml
@@ -75,7 +75,8 @@ status:  {}
 
 ## Deploy with yamls:
 ```
-oc apply -f tenant-base.yaml
+oc apply -f tenant-base.yaml      # Kubernetes
+oc apply -f tenant-openshift.yaml # Openshift
 oc apply -f scc-myminio-sa.yaml
 oc apply -f route.yaml # modify with correct domain
 ```
