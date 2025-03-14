@@ -78,7 +78,7 @@ status:  {}
 oc apply -f tenant-base.yaml      # Kubernetes
 oc apply -f tenant-openshift.yaml # Openshift
 oc apply -f scc-myminio-sa.yaml
-oc apply -f route.yaml # modify with correct domain
+oc apply -f route.yaml 
 ```
 
 ## Create bucket:
