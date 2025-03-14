@@ -57,20 +57,17 @@ oc create route passthrough --service myminio-console
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
+  creationTimestamp: null
   name: myminio-console
   namespace: minio-tenant
 spec:
-  host: myminio-console-minio-tenant.apps.cluster-k2j4h.dynamic.redhatworkshops.io #modify hostname
   port:
     targetPort: https-console
   tls:
     termination: passthrough
   to:
-    kind: Service
+    kind: ""
     name: myminio-console
-    weight: 100
-  wildcardPolicy: None
-status:  {}
 ```
 
 ## Deploy with yamls:
