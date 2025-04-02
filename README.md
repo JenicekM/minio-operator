@@ -100,3 +100,28 @@ NAME              HOST/PORT                                                     
 myminio-console   myminio-console-minio-tenant.apps.cluster-k2j4h.dynamic.redhatworkshops.io          myminio-console   https-console   passthrough   None
 
 ```
+### to reach Minio API test IP or service to have propper endpoint:
+```
+oc get pod -o wide
+NAME                   READY   STATUS    RESTARTS   AGE     IP            NODE                     NOMINATED NODE   READINESS GATES
+myminio-standalone-0   2/2     Running   0          2m14s   10.135.0.58   worker-cluster-p77z5-1   <none>           <none>
+
+oc get all
+
+NAME                       READY   STATUS     RESTARTS   AGE
+pod/myminio-standalone-0   0/2     Init:0/1   0          3s
+
+NAME                      TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/minio             ClusterIP   172.31.102.100   <none>        443/TCP    4s
+service/myminio-console   ClusterIP   172.31.213.236   <none>        9443/TCP   4s
+service/myminio-hl        ClusterIP   None             <none>        9000/TCP   4s
+
+
+curl 10.135.0.58:9000
+curl myminio-hl.minio-tenant.svc:9000
+curl http://myminio-hl.minio-tenant.svc:9000
+
+Client sent an HTTP request to an HTTPS server.
+
+
+```
