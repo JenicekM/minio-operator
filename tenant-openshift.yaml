@@ -69,7 +69,7 @@ spec:
             storage: 10Gi
     volumesPerServer: 1
   priorityClassName: ""
-  requestAutoCert: true
+  requestAutoCert: false
   serviceAccountName: ""
   serviceMetadata:
     consoleServiceAnnotations: {}
