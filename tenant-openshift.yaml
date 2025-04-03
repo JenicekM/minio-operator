@@ -12,7 +12,7 @@ stringData:
   config.env: |-
     export MINIO_ROOT_USER="minio"
     export MINIO_ROOT_PASSWORD="minio123"
-    export MINIO_STORAGE_CLASS_STANDARD="EC:0" #use for 1 PVC, see https://min.io/docs/minio/linux/reference/minio-server/settings/storage-class.html
+    export MINIO_STORAGE_CLASS_STANDARD="EC:0"
     export MINIO_BROWSER="on"
 type: Opaque
 ---
