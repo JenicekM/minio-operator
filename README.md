@@ -121,7 +121,8 @@ curl 10.135.0.58:9000
 curl myminio-hl.minio-tenant.svc:9000
 curl http://myminio-hl.minio-tenant.svc:9000
 
-Client sent an HTTP request to an HTTPS server.
-
+Client sent an HTTP request to an HTTPS server. # need to disable requestAutoCert
+    export MINIO_STORAGE_CLASS_STANDARD="EC:0" #use for 1 PVC, see https://min.io/docs/minio/linux/reference/minio-server/settings/storage-class.html
+	  requestAutoCert: false # if you want to enable you have to modify Loki-stack with tls ca crt
 
 ```
