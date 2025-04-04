@@ -50,24 +50,11 @@ oc adm policy add-scc-to-user privileged  system:serviceaccount:minio-tenant:mym
 ```
 ### route: 
 ```
-oc create route passthrough --service myminio-console
+oc create route edge --service myminio-console
 ```
 #### or 
 ```
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  creationTimestamp: null
-  name: myminio-console
-  namespace: minio-tenant
-spec:
-  port:
-    targetPort: https-console
-  tls:
-    termination: passthrough
-  to:
-    kind: ""
-    name: myminio-console
+oc apply -f route.yaml
 ```
 
 ## Deploy with yamls:
@@ -76,12 +63,6 @@ oc apply -f tenant-base.yaml      # Kubernetes
 oc apply -f tenant-openshift.yaml # Openshift
 oc apply -f scc-myminio-sa.yaml
 oc apply -f route.yaml 
-```
-
-## Create bucket:
-```
-oc exec -it myminio-pool-0-0 -- mc alias set myminio https://localhost:9000 minio minio123 --insecure
-oc exec -it myminio-pool-0-0 -- mc mb myminio/mybucket --insecure
 ```
 ### pasword access_key in tenant-base.yaml or:
 ```
@@ -125,4 +106,15 @@ Client sent an HTTP request to an HTTPS server. # need to disable requestAutoCer
     export MINIO_STORAGE_CLASS_STANDARD="EC:0" #use for 1 PVC, see https://min.io/docs/minio/linux/reference/minio-server/settings/storage-class.html
 	  requestAutoCert: false # if you want to enable you have to modify Loki-stack with tls ca crt
 
+```
+## Create bucket and user with access_key and secure_key:
+```
+  oc exec -it myminio-standalone-0 -n minio-tenant -- mc alias set myminio http://localhost:9000 minio minio123
+  oc exec -it myminio-standalone-0 -n minio-tenant -- mc mb myminio/loki-bucket
+  oc exec -it myminio-standalone-0 -n minio-tenant -- mc admin user add myminio loki-user AdJt308wCKq6ABgAjSYrNLztxPQoMpIxGCwVo1Uh
+  oc exec -it myminio-standalone-0 -n minio-tenant -- mc admin policy attach myminio readwrite --user=loki-user
+
+  #if TLS enabled you can use --insecure
+  oc exec -it myminio-pool-0-0 -- mc alias set myminio https://localhost:9000 minio minio123 --insecure
+  oc exec -it myminio-pool-0-0 -- mc mb myminio/mybucket --insecure
 ```
