@@ -99,6 +99,7 @@ service/myminio-hl        ClusterIP   None             <none>        9000/TCP   
 
 
 curl 10.135.0.58:9000
+curl http://myminio-hl.minio-tenant.svc.cluster.local:9000
 curl myminio-hl.minio-tenant.svc:9000
 curl http://myminio-hl.minio-tenant.svc:9000
 
