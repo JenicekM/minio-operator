@@ -112,7 +112,7 @@ Client sent an HTTP request to an HTTPS server. # need to disable requestAutoCer
 ```
   oc exec -it myminio-standalone-0 -n minio-tenant -- mc alias set myminio http://localhost:9000 minio minio123
   oc exec -it myminio-standalone-0 -n minio-tenant -- mc mb myminio/loki-bucket
-  oc exec -it myminio-standalone-0 -n minio-tenant -- mc admin user add myminio loki-user AdJt308wCKq6ABgAjSYrNLztxPQoMpIxGCwVo1Uh
+  oc exec -it myminio-standalone-0 -n minio-tenant -- mc admin user add myminio loki-user loki-pass
   oc exec -it myminio-standalone-0 -n minio-tenant -- mc admin policy attach myminio readwrite --user=loki-user
 
   #if TLS enabled you can use --insecure
